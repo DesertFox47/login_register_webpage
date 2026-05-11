@@ -18,54 +18,99 @@ function showLogin(){
 
 
 // REGISTER FUNCTION
-function register(){
+async function register() {
 
-    let name = document.getElementById("registerName").value;
+    let name =
+        document.getElementById("registerName").value;
 
-    let email = document.getElementById("registerEmail").value;
+    let email =
+        document.getElementById("registerEmail").value;
 
-    let password = document.getElementById("registerPassword").value;
+    let password =
+        document.getElementById("registerPassword").value;
 
 
-    if(name === "" || email === "" || password === ""){
-
+    if(name === "" ||
+       email === "" ||
+       password === "")
+    {
         alert("Please fill all fields");
-
         return;
     }
 
-    // SAVE DATA IN BROWSER STORAGE
-    localStorage.setItem("email", email);
+    try {
 
-    localStorage.setItem("password", password);
+        let response = await fetch(
+            "http://localhost:5000/register",
+            {
+                method: "POST",
 
-    document.getElementById("message").innerText =
-        "Registration Successful!";
+                headers: {
+                    "Content-Type":
+                    "application/json"
+                },
 
-    showLogin();
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password
+                })
+            }
+        );
+
+        let result = await response.text();
+
+        document.getElementById("message")
+            .innerText = result;
+
+        showLogin();
+    }
+    catch(error) {
+
+        console.log(error);
+
+        alert("Server Error");
+    }
 }
 
 
 // LOGIN FUNCTION
-function login(){
+async function login() {
 
-    let email = document.getElementById("loginEmail").value;
+    let email =
+        document.getElementById("loginEmail").value;
 
-    let password = document.getElementById("loginPassword").value;
+    let password =
+        document.getElementById("loginPassword").value;
 
+    try {
 
-    let storedEmail = localStorage.getItem("email");
+        let response = await fetch(
+            "http://localhost:5000/login",
+            {
+                method: "POST",
 
-    let storedPassword = localStorage.getItem("password");
+                headers: {
+                    "Content-Type":
+                    "application/json"
+                },
 
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            }
+        );
 
-    if(email === storedEmail && password === storedPassword){
+        let result = await response.text();
 
-        document.getElementById("message").innerText =
-            "Login Successful!";
+        document.getElementById("message")
+            .innerText = result;
     }
-    else{
+    catch(error) {
 
-        alert("Invalid Email or Password");
+        console.log(error);
+
+        alert("Server Error");
     }
 }
